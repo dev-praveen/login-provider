@@ -1,5 +1,6 @@
 package com.auth.provider.api;
 
+import com.auth.provider.model.TokenResponse;
 import com.auth.provider.service.TokenGenerator;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -18,13 +19,9 @@ public class AuthController {
   private final TokenGenerator tokenService;
 
   @PostMapping("/token")
-  public String token(Authentication authentication) {
+  public TokenResponse token(Authentication authentication) {
 
-    logger.debug("Token requested for user: '{}'", authentication.getName());
-    String token = tokenService.generateToken(authentication);
-    logger.debug("Token granted: {}", token);
-    return token;
+    logger.info("Token requested for user: '{}'", authentication.getName());
+    return tokenService.generateToken(authentication);
   }
-
-
 }

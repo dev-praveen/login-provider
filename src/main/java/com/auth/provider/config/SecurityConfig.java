@@ -15,19 +15,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -39,12 +34,7 @@ public class SecurityConfig {
   @Bean
   public InMemoryUserDetailsManager users() {
     return new InMemoryUserDetailsManager(
-        User.withUsername("dvega").password("password").authorities("read").build());
-  }
-
-  @Bean
-  PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
+        User.withUsername("praveen").password("{noop}password").authorities("read").build());
   }
 
   @Bean
@@ -79,17 +69,5 @@ public class SecurityConfig {
             .build();
     JWKSource<SecurityContext> jwkSources = new ImmutableJWKSet<>(new JWKSet(jwk));
     return new NimbusJwtEncoder(jwkSources);
-  }
-
-  @Bean
-  public JwtAuthenticationConverter jwtAuthenticationConverter() {
-
-    JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter =
-        new JwtGrantedAuthoritiesConverter();
-    grantedAuthoritiesConverter.setAuthorityPrefix("");
-
-    JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-    jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
-    return jwtAuthenticationConverter;
   }
 }

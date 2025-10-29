@@ -1,5 +1,6 @@
 package com.auth.provider.service;
 
+import com.auth.provider.model.TokenResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -7,7 +8,6 @@ import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
-
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.stream.Collectors;
@@ -18,9 +18,11 @@ public class TokenGenerator {
 
   private final JwtEncoder encoder;
 
-  public String generateToken(Authentication authentication) {
+  public TokenResponse generateToken(Authentication authentication) {
 
     Instant now = Instant.now();
+    Instant expiresAt = now.plus(1, ChronoUnit.HOURS);
+
     String scope =
         authentication.getAuthorities().stream()
             .map(GrantedAuthority::getAuthority)
@@ -34,6 +36,8 @@ public class TokenGenerator {
             .claim("scope", scope)
             .build();
 
-    return encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    String tokenValue = encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    long expiresIn = ChronoUnit.SECONDS.between(now, expiresAt);
+    return new TokenResponse(tokenValue, expiresIn, "Bearer", scope);
   }
 }
