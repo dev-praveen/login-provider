@@ -20,5 +20,8 @@ jwt:
   public-key: classpath:certs/public.pem
 
 springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
